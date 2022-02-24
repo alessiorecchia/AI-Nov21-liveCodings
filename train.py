@@ -1,6 +1,7 @@
+
 from torchvision import datasets, transforms
 import torch
-from torch import nn
+from torch import _test_serialization_subcmul, nn
 import torch.nn.functional as F
 from model import Classify
 from torch import optim
@@ -25,8 +26,9 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=True)
 criterion=nn.CrossEntropyLoss()
 optimizer=optim.Adam(clf.parameters(),lr=0.003)
 
-epochs=10
+epochs=50
 losses = []
+test_losses = []
 
 for e in range(epochs):
     running_loss=0
@@ -45,8 +47,22 @@ for e in range(epochs):
 
         running_loss+=loss.item()
 
-    print('loss', running_loss/len(trainloader))
+    print('Train Loss:  ', running_loss/len(trainloader))
     losses.append(running_loss/len(trainloader))
+    clf.eval()
+    with torch.no_grad():
+        test_running_loss = 0
+        for images, labels in iter(testloader):
 
-plt.plot(losses)
+            images = images.view(images.shape[0], -1)
+            test_pred = clf.forward(images)
+            test_loss = criterion(test_pred, labels)
+            test_running_loss += test_loss.item()
+
+        print('Test Loss:   ', test_running_loss/len(testloader))
+        test_losses.append(test_running_loss/len(testloader))
+
+plt.plot(losses, label='trainlosses')
+plt.plot(test_losses, label='testlosses')
+plt.legend()
 plt.show()
