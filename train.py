@@ -1,4 +1,3 @@
-
 from torchvision import datasets, transforms
 import torch
 from torch import _test_serialization_subcmul, nn
@@ -6,6 +5,7 @@ import torch.nn.functional as F
 from model import Classify
 from torch import optim
 import matplotlib.pyplot as plt
+from helper_functions import acc
 
 
 clf=Classify(28*28,10)
@@ -52,17 +52,19 @@ for e in range(epochs):
     clf.eval()
     with torch.no_grad():
         test_running_loss = 0
-        for images, labels in iter(testloader):
+        for images_test, labels_test in iter(testloader):
 
-            images = images.view(images.shape[0], -1)
-            test_pred = clf.forward(images)
-            test_loss = criterion(test_pred, labels)
+            images_test = images_test.view(images_test.shape[0], -1)
+            test_pred = clf.forward(images_test)
+            test_loss = criterion(test_pred, labels_test)
             test_running_loss += test_loss.item()
 
         print('Test Loss:   ', test_running_loss/len(testloader))
         test_losses.append(test_running_loss/len(testloader))
-
+        if e % 5 == 0:
+            print('Accuracy', acc(test_pred,labels_test))
+    clf.train()
 plt.plot(losses, label='trainlosses')
-plt.plot(test_losses, label='testlosses')
+plt.plot(test_losses, label='testlosses')   
 plt.legend()
 plt.show()
