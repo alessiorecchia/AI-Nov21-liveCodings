@@ -1,5 +1,9 @@
-import matplotlib.pyplot as plt
+import numpy as np
 
-list_ = [5, 3, 2, 1.5, 1.2, 1.1]
-plt.plot(list_)
-plt.show()
+
+a = np.array([1,0,2,3,1,4,6])
+b = np.array([1,0,8,3,1,4,7])
+
+c = sum(a == b)/a.shape[0]
+
+print(c)
