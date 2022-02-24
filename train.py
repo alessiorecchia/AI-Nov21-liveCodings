@@ -4,6 +4,7 @@ from torch import nn
 import torch.nn.functional as F
 from model import Classify
 from torch import optim
+import matplotlib.pyplot as plt
 
 
 clf=Classify(28*28,10)
@@ -25,6 +26,7 @@ criterion=nn.CrossEntropyLoss()
 optimizer=optim.Adam(clf.parameters(),lr=0.003)
 
 epochs=10
+losses = []
 
 for e in range(epochs):
     running_loss=0
@@ -44,3 +46,7 @@ for e in range(epochs):
         running_loss+=loss.item()
 
     print('loss', running_loss/len(trainloader))
+    losses.append(running_loss/len(trainloader))
+
+plt.plot(losses)
+plt.show()
