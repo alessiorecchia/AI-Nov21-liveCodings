@@ -44,7 +44,6 @@ for e in range(epochs):
         loss.backward()
         optimizer.step()
 
-
         running_loss+=loss.item()
 
     print('Train Loss:  ', running_loss/len(trainloader))
